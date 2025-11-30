@@ -1,0 +1,5 @@
+aiogram==3.8.0
+mysql-connector-python==9.0.0
+python-dotenv==1.0.1
+aiofiles==23.2.1
+Pillow==10.4.0

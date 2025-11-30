@@ -1,0 +1,19 @@
+# Файлы, игнорируемые по умолчанию
+/shelf/
+/workspace.xml
+# Env
+.env
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Media (фото не должны быть в Git!)
+media/
+
+# Logs, backups
+*.log
+*.sql
+*.zip
