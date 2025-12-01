@@ -237,13 +237,14 @@ async def _save_repair(message: Message, state: FSMContext):
 
 @router.message(F.text == "📊 Посмотреть расходы")
 async def view_repairs_menu(message: Message):
-    # Здесь будет меню: "Простые расходы" / "Ремонты"
     kb = [
-        ["📊 Простые расходы", "🔧 История ремонтов"],
-        ["↩️ Назад"]
+        [KeyboardButton(text="📊 Простые расходы"), KeyboardButton(text="🔧 История ремонтов")],
+        [KeyboardButton(text="↩️ Назад")]
     ]
-    from aiogram.types import ReplyKeyboardMarkup
-    await message.answer("Выберите тип:", reply_markup=ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True))
+    await message.answer(
+        "Выберите тип:",
+        reply_markup=ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
+    )
 
 @router.message(F.text == "🔧 История ремонтов")
 async def list_repairs(message: Message):
