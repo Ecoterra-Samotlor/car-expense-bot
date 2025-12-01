@@ -17,7 +17,7 @@ class RepairForm(StatesGroup):
     total_amount = State()
     add_works = State()
     add_parts = State()
-    add_parts_brand = State()      # ← ДОБАВЬ ЭТО СОСТОЯНИЕ
+    add_parts_brand = State()      # ← ЭТО СОСТОЯНИЕ ОТСУТСТВУЕТ
     add_parts_amount = State()
     add_parts_photo = State()
     confirm = State()
