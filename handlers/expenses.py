@@ -4,6 +4,8 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 import os
+from aiogram.types import FSInputFile
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
 from pathlib import Path
 from datetime import datetime
 from database import Database
@@ -161,6 +163,9 @@ async def _save_photo(message: Message, state: FSMContext, photo_type: str):
     else:
         await message.answer("✅ Расход сохранён!")
         await state.clear()
+
+    print(f"DEBUG: Saving photo to {filepath}")
+    print(f"DEBUG: File exists after save: {filepath.exists()}")
 
 async def _ask_for_part_photo(message: Message, state: FSMContext):
     await state.set_state(ExpenseForm.attach_part)
