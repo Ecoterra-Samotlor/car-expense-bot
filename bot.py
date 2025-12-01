@@ -1,24 +1,29 @@
-# bot.py
-import asyncio
-import logging
-from aiogram import Bot, Dispatcher
-from config import TG_BOT_TOKEN  # ← убедись, что токен в .env
+from aiogram import Router, F
+from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.fsm.context import FSMContext
+from database import Database
 
-async def main():
-    logging.basicConfig(level=logging.INFO)
-    bot = Bot(token=TG_BOT_TOKEN)  # ← не вставляй токен в код!
-    dp = Dispatcher()
+router = Router()  # ✅ Обязательно до использования @router
+db = Database()
 
-    # Явно импортируем и подключаем роутеры
-    from handlers.start import router as start_router
-    from handlers.cars import router as cars_router
-    from handlers.expenses import router as expenses_router
-    from handlers.repairs import router as repairs_router
+@router.message(F.text == "/start")
+async def cmd_start(message: Message, state: FSMContext):
+    await state.clear()
+    user_id = message.from_user.id
+    username = message.from_user.username or ""
 
-    dp.include_routers(repairs_router, expenses_router, cars_router, start_router)
+    conn = db.get_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT IGNORE INTO users (user_id, username) VALUES (%s, %s)", (user_id, username))
+    conn.close()
 
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    # Главное меню
+    kb = [
+        ["🚗 Добавить авто"],
+        ["💰 Добавить расход", "🔧 Добавить ремонт"],
+        ["📊 Посмотреть расходы", "📸 Посмотреть фото"]
+    ]
+    await message.answer(
+        "Выберите действие:",
+        reply_markup=ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
+    )
