@@ -3,7 +3,7 @@ from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.fsm.context import FSMContext
 from database import Database
 
-router = Router()  # ← ЭТА СТРОКА ОБЯЗАТЕЛЬНО ДОЛЬШЕ @router
+router = Router()  # ← Обязательно до использования @router
 db = Database()
 
 @router.message(F.text == "/start")
