@@ -1,9 +1,12 @@
+# main.py
 import asyncio
 import os
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import load_dotenv
-from bot import router
+
+# ✅ Подключаем ВСЕ роутеры из handlers
+from handlers import start, cars, expenses, repairs
 
 load_dotenv()
 BOT_TOKEN = os.getenv("TG_BOT_TOKEN")
@@ -12,7 +15,12 @@ if not BOT_TOKEN:
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
-dp.include_router(router)
+
+# ✅ Включаем роутеры в правильном порядке
+dp.include_router(start.router)      # /start и главное меню
+dp.include_router(cars.router)       # добавление авто
+dp.include_router(expenses.router)   # расходы
+dp.include_router(repairs.router)    # ремонты
 
 async def main():
     print("✅ Бот запущен...")
