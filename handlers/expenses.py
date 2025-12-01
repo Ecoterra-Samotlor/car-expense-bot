@@ -172,7 +172,7 @@ async def _ask_for_part_photo(message: Message, state: FSMContext):
     await message.answer("Хотите прикрепить фото запчасти? Отправьте фото или напишите 'нет'.")
 
 # --- Просмотр фото ---
-@router.message(F.text.startswith("/photos"))
+@router.message(F.text == "📸 Посмотреть фото")
 async def send_photos(message: Message):
     user_id = message.from_user.id
 
