@@ -1,3 +1,4 @@
+# handlers/expenses.py
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.state import State, StatesGroup
@@ -26,7 +27,7 @@ class ExpenseForm(StatesGroup):
     attach_part = State()
     vin = State()  # будем хранить VIN после выбора авто
 
-@router.message(F.text == "/add_expense")
+@router.message(F.text == "💰 Добавить расход")
 async def add_expense_start(message: Message, state: FSMContext):
     user_id = message.from_user.id
     conn = db.get_connection()

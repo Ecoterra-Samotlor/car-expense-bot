@@ -1,3 +1,4 @@
+# handlers/cars.py
 from aiogram import Router, F
 from aiogram.types import Message
 from aiogram.fsm.state import State, StatesGroup
@@ -16,7 +17,7 @@ class CarForm(StatesGroup):
     insurance_expiry = State()
     inspection_expiry = State()
 
-@router.message(F.text == "/add_car")
+@router.message(F.text == "🚗 Добавить авто")
 async def add_car_start(message: Message, state: FSMContext):
     await state.set_state(CarForm.vin)
     await message.answer("Введите VIN (17 символов):")
