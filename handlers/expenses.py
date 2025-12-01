@@ -215,3 +215,57 @@ async def send_photos_for_vin(callback: CallbackQuery):
     if not sent:
         await callback.message.answer("Нет сохранённых фото.")
     await callback.answer()
+
+@router.message(F.text == "📊 Простые расходы")
+async def view_simple_expenses(message: Message):
+    user_id = message.from_user.id
+
+    conn = db.get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT license_plate, vin FROM cars WHERE user_id = %s", (user_id,))
+    cars = cursor.fetchall()
+    conn.close()
+
+    if not cars:
+        await message.answer("У вас нет добавленных авто.")
+        return
+
+    buttons = []
+    for license_plate, vin in cars:
+        buttons.append([InlineKeyboardButton(text=license_plate, callback_data=f"viewexp_{vin}")])
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    await message.answer("Выберите авто для просмотра расходов:", reply_markup=keyboard)
+
+@router.callback_query(F.data.startswith("viewexp_"))
+async def show_expenses_for_vin(callback: CallbackQuery):
+    vin = callback.data.split("_", 1)[1]
+    user_id = callback.from_user.id
+
+    conn = db.get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT amount, category, mileage, note, created_at
+        FROM expenses
+        WHERE user_id = %s AND vin = %s
+        ORDER BY created_at DESC
+        LIMIT 10
+    """, (user_id, vin))
+    expenses = cursor.fetchall()
+    conn.close()
+
+    if not expenses:
+        await callback.message.answer("Нет записей о расходах для этого авто.")
+        await callback.answer()
+        return
+
+    text = "Ваши последние расходы:\n\n"
+    for amount, category, mileage, note, created_at in expenses:
+        date_str = created_at.strftime("%d.%m.%Y")
+        line = f"• {date_str} | {mileage} км | {amount} ₽ | {category}"
+        if note:
+            line += f"\n  └ {note}"
+        text += line + "\n\n"
+
+    await callback.message.answer(text[:4096])  # ограничение Telegram
+    await callback.answer()
